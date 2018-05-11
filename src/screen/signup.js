@@ -52,19 +52,16 @@ export default class componentName extends Component {
                 firebase.database().ref('users/' + result.uid).set({
                     nama: nama,
                     nomer_hp: nomer_hp,
-                    alamat: alamat
+                    alamat: alamat,
+                    role : 'masyarakat'
                 })
                 Alert.alert('Registrasi Berhasil', 'Silahkan Buka Email Untuk Memverifikasi Akun')
-                this.props.navigation.navigate('Screen')
+                this.props.navigation.navigate('Screen', {loginType : 'masyarakat'})
             }).catch((e) => {
-                this.setState({
-                    message: e.message
-                })
+                Alert.alert('Registrasi Gagal', e.message)
             })
         } else {
-            this.setState({
-                message: Alert.alert('Registrasi Gagal', 'Harap Isi Semua Data')
-            })
+            Alert.alert('Registrasi Gagal', 'Harap Isi Semua Data')
         }
     }
 
@@ -83,6 +80,7 @@ export default class componentName extends Component {
                         <Item floatingLabel style={{ marginTop: 5, marginBottom: 10, borderColor: '#2ecc71' }}>
                             <Label style={{ color: '#2ecc71' }}>No HP</Label>
                             <Input
+                                keyboardType="phone-pad"
                                 onChangeText={(nomer_hp) => this.setState({ nomer_hp })}
                                 value={this.state.nomer_hp} />
                         </Item>

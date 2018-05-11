@@ -1,8 +1,21 @@
 import React, { Component } from 'react';
-import {  View, Text, Alert} from 'react-native';
+import {  View, Alert} from 'react-native';
 import {
-    RkButton
+    RkButton, RkTabView
 } from 'react-native-ui-kitten'
+import {
+    Button,
+    Footer,
+    FooterTab,
+    Text,
+    Container,
+    Content,
+    StyleProvider } from 'native-base';
+
+import getTheme from '../../native-base-theme/components'
+import commonTheme from '../../native-base-theme/variables/commonColor'
+
+import BangSamPage from './bangsam';
 
 export default class HomeApp extends Component {
     onLogout(){
@@ -12,19 +25,38 @@ export default class HomeApp extends Component {
                 firebase.auth().signOut().then((result) => {
                     //Berhasil Logout
                     this.props.onLogout()
-                }).catch((e) => Alert.alert('Logout Gagal', 'Anda Tidak Bisa Logout'))
+                    this.props.navigation.setParams({'isLoggedIn' : false})
+                    this.props.navigation.navigate('Splash')
+                }).catch((e) => console.log(e))
             }
         }, {
             text : 'TIDAK',
             onPress : () => {}
         }])
     }
-  render() {
-    return (
-      <View>
-        <Text> HomeApp </Text>
-        <RkButton onPress={this.onLogout.bind(this)} rkType="danger small"> Logout </RkButton>
-      </View>
-    );
-  }
+
+    componentDidMount() {
+        let title = this.props.role == 'masyarakat' ? 'Bangsam Masyarakat' : 'Bangsam Admin'
+        this.props.navigation.setParams({title : title})
+    }
+
+    checkRolePage() {
+        // alert(this.props.role)
+        if (this.props.role == 'masyarakat') {
+            return (
+                <View>
+                    <Text>Hello World</Text>
+                    <RkButton onPress={this.onLogout.bind(this)}>Logout</RkButton>
+                </View>
+            )
+        } else {
+            return (
+                <BangSamPage {...this.props} btnLogout={this.onLogout.bind(this)}/>
+            )
+        }
+    }
+
+    render() {
+        return this.checkRolePage()
+    }
 }
